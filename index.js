@@ -7,7 +7,7 @@ var cron = require("./cron");
 //Initial Page
 app.get("/", (req, res) => {
   res.send(
-    "Welcome to nCoV-KR API, please visit /patients, /status, /caution for more info"
+    "Welcome to nCoV-KR API made by Joon Choi. Please visit /patients, /allstatus, /track for more info"
   );
 });
 
