@@ -1,76 +1,76 @@
-const request = require("request");
-const cheerio = require("cheerio");
-var AllStatus = require("./models/AllStatus.js");
-var Patient = require("./models/Patient.js");
+const request = require('request');
+const cheerio = require('cheerio');
+var AllStatus = require('./models/AllStatus.js');
+var Patient = require('./models/Patient.js');
 
 module.exports.Total = function updateTotal() {
-  request("http://ncov.mohw.go.kr/", (error, response, html) => {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         let res = [];
         const $ = cheerio.load(html);
-        const table = $("div#mapAll").find("ul.cityinfo");
+        const table = $('div#mapAll').find('ul.cityinfo');
         const confirm = parseInt(
           table
-            .find("li")
+            .find('li')
             .eq(0)
-            .find("div")
+            .find('div')
             .eq(1)
-            .find("span", (class_ = "num"))
+            .find('span', (class_ = 'num'))
             .text()
-            .replace(",", "")
+            .replace(',', '')
         );
         const increment = parseInt(
           table
-            .find("li")
+            .find('li')
             .eq(1)
-            .find("div")
+            .find('div')
             .eq(1)
-            .find("span", (class_ = "sub_num.red"))
+            .find('span', (class_ = 'sub_num.red'))
             .text()
             .slice(2, -1)
         );
         const monitor = parseInt(
           table
-            .find("li")
+            .find('li')
             .eq(2)
-            .find("div")
+            .find('div')
             .eq(1)
-            .find("span", (class_ = "num"))
+            .find('span', (class_ = 'num'))
             .text()
-            .replace(",", "")
+            .replace(',', '')
         );
         const cured = parseInt(
           table
-            .find("li")
+            .find('li')
             .eq(3)
-            .find("div")
+            .find('div')
             .eq(1)
-            .find("span", (class_ = "num"))
+            .find('span', (class_ = 'num'))
             .text()
-            .replace(",", "")
+            .replace(',', '')
         );
         const death = parseInt(
           table
-            .find("li")
+            .find('li')
             .eq(4)
-            .find("div")
+            .find('div')
             .eq(1)
-            .find("span", (class_ = "num"))
+            .find('span', (class_ = 'num'))
             .text()
-            .replace(",", "")
+            .replace(',', '')
         );
-        const formatDate = $("span.livedate")
+        const formatDate = $('span.livedate')
           .eq(1)
           .text()
-          .split(",")[0]
+          .split(',')[0]
           .slice(1)
-          .split(".");
+          .split('.');
         const fullDate = `질병관리본부 ${parseInt(formatDate[0])}월 ${parseInt(
           formatDate[1]
         )}일 ${formatDate[2].trim()}`;
         AllStatus.updateOne(
-          { _id: "5e569d3c02d7831dfc09019d" },
+          { _id: '5e569d3c02d7831dfc09019d' },
           {
             confirm: confirm,
             cured: cured,
@@ -83,7 +83,7 @@ module.exports.Total = function updateTotal() {
             if (err) {
               console.error(err);
             } else {
-              console.log(docs.n + " allStatus updated");
+              console.log(docs.n + ' allStatus updated');
             }
           }
         );
@@ -91,14 +91,14 @@ module.exports.Total = function updateTotal() {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " allStatus updated");
+            console.log(docs.n + ' allStatus updated');
           }
         });
         Patient.updateMany({}, { updatedDate: fullDate }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " patients updated");
+            console.log(docs.n + ' patients updated');
           }
         });
       } catch (err) {
@@ -112,24 +112,24 @@ module.exports.Total = function updateTotal() {
 
 module.exports.Countries = function updateTotal() {
   request(
-    "http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=14",
+    'http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=14',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const table = $("table.num").eq(0).find("tbody");
-          table.find("tr").each(function (i, elem) {
-            let country = $(this).find("td.w_bold").text();
-            if (country == "한국") {
+          const table = $('table.num').eq(0).find('tbody');
+          table.find('tr').each(function (i, elem) {
+            let country = $(this).find('td.w_bold').text();
+            if (country == '한국') {
               return false;
             }
             confirmed = parseInt(
               $(this)
-                .find("td")
+                .find('td')
                 .eq(1)
                 .text()
-                .split(" ")[0]
-                .replace(/[,명]/g, "")
+                .split(' ')[0]
+                .replace(/[,명]/g, '')
             );
             if (!country || !confirmed) {
               return false;
@@ -137,11 +137,11 @@ module.exports.Countries = function updateTotal() {
             try {
               death = parseInt(
                 $(this)
-                  .find("td")
+                  .find('td')
                   .eq(1)
                   .text()
-                  .split(" ")[1]
-                  .replace(/[(,사망)]/g, "")
+                  .split(' ')[1]
+                  .replace(/[(,사망)]/g, '')
               );
             } catch (err) {
               death = 0;
@@ -175,22 +175,22 @@ module.exports.Countries = function updateTotal() {
 
 module.exports.Seoul = function updateTotal() {
   request(
-    "http://www.seoul.go.kr/coronaV/coronaStatus.do",
+    'http://www.seoul.go.kr/coronaV/coronaStatus.do',
     { timeout: 5000 },
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const status = $("div .status");
-          const num = status.find("div .num1").find(".counter").text().trim();
+          const status = $('div .status');
+          const num = status.find('div .num1').find('.counter').text().trim();
           AllStatus.updateOne(
-            { region: "서울" },
+            { region: '서울' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Seoul updated");
+                console.log(docs.n + ' Seoul updated');
               }
             }
           );
@@ -203,17 +203,17 @@ module.exports.Seoul = function updateTotal() {
 };
 
 module.exports.Busan = function updateTotal() {
-  request("http://www.busan.go.kr/corona19/index", (error, response, html) => {
+  request('http://www.busan.go.kr/corona19/index', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const banner = $("div .banner");
-        const num = banner.find("span[class=item2]").text().replace("명", "");
-        AllStatus.updateOne({ region: "부산" }, { total: num }, (err, docs) => {
+        const banner = $('div .banner');
+        const num = banner.find('span[class=item2]').text().replace('명', '');
+        AllStatus.updateOne({ region: '부산' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Busan updated");
+            console.log(docs.n + ' Busan updated');
           }
         });
       } catch (err) {
@@ -224,19 +224,19 @@ module.exports.Busan = function updateTotal() {
 };
 
 module.exports.Daegu = function updateTotal() {
-  request("http://ncov.mohw.go.kr/", (error, response, html) => {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div#main_maplayout");
+        const dashboard = $('div#main_maplayout');
         const num = parseInt(
-          dashboard.find("span.num").eq(2).text().replace(/,/g, "")
+          dashboard.find('span.num').eq(2).text().replace(/,/g, '')
         );
-        AllStatus.updateOne({ region: "대구" }, { total: num }, (err, docs) => {
+        AllStatus.updateOne({ region: '대구' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Daegu updated");
+            console.log(docs.n + ' Daegu updated');
           }
         });
       } catch (err) {
@@ -250,23 +250,23 @@ module.exports.Daegu = function updateTotal() {
 
 module.exports.Incheon = function updateTotal() {
   request(
-    "https://www.incheon.go.kr/corona19/IC010001",
+    'https://www.incheon.go.kr/corona19/IC010001',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("table").find("tbody");
+          const dashboard = $('table').find('tbody');
           const num = parseInt(
-            dashboard.find("td").eq(0).find("em.num-red").text()
+            dashboard.find('td').eq(0).find('em.num-red').text()
           );
           AllStatus.updateOne(
-            { region: "인천" },
+            { region: '인천' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Incheon updated");
+                console.log(docs.n + ' Incheon updated');
               }
             }
           );
@@ -281,19 +281,19 @@ module.exports.Incheon = function updateTotal() {
 };
 
 module.exports.Gwangju = function updateTotal() {
-  request("http://ncov.mohw.go.kr/", (error, response, html) => {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div#main_maplayout");
+        const dashboard = $('div#main_maplayout');
         const num = parseInt(
-          dashboard.find("span.num").eq(4).text().replace(/,/g, "")
+          dashboard.find('span.num').eq(4).text().replace(/,/g, '')
         );
-        AllStatus.updateOne({ region: "광주" }, { total: num }, (err, docs) => {
+        AllStatus.updateOne({ region: '광주' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Gwangju updated");
+            console.log(docs.n + ' Gwangju updated');
           }
         });
       } catch (err) {
@@ -307,23 +307,23 @@ module.exports.Gwangju = function updateTotal() {
 
 module.exports.Daejeon = function updateTotal() {
   request(
-    "https://www.daejeon.go.kr/corona19/index.do",
+    'https://www.daejeon.go.kr/corona19/index.do',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("div.txt2");
+          const dashboard = $('div.txt2');
           const num = parseInt(
-            dashboard.find("span.s-txt").eq(0).find("strong").text()
+            dashboard.find('span.s-txt').eq(0).find('strong').text()
           );
           AllStatus.updateOne(
-            { region: "대전" },
+            { region: '대전' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Daejeon updated");
+                console.log(docs.n + ' Daejeon updated');
               }
             }
           );
@@ -338,20 +338,20 @@ module.exports.Daejeon = function updateTotal() {
 };
 
 module.exports.Ulsan = function updateTotal() {
-  request("http://www.ulsan.go.kr/corona.jsp", (error, response, html) => {
+  request('http://www.ulsan.go.kr/corona.jsp', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div.situation1_1").find("ul");
+        const dashboard = $('div.situation1_1').find('ul');
         const num =
-          parseInt(dashboard.find("span.num_people.counter").eq(0).text()) +
-          parseInt(dashboard.find("span.num_people.counter").eq(1).text()) +
-          parseInt(dashboard.find("span.num_people.counter").eq(2).text());
-        AllStatus.updateOne({ region: "울산" }, { total: num }, (err, docs) => {
+          parseInt(dashboard.find('span.num_people.counter').eq(0).text()) +
+          parseInt(dashboard.find('span.num_people.counter').eq(1).text()) +
+          parseInt(dashboard.find('span.num_people.counter').eq(2).text());
+        AllStatus.updateOne({ region: '울산' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Ulsan updated");
+            console.log(docs.n + ' Ulsan updated');
           }
         });
       } catch (err) {
@@ -364,19 +364,19 @@ module.exports.Ulsan = function updateTotal() {
 };
 
 module.exports.Sejong = function updateTotal() {
-  request("http://ncov.mohw.go.kr/", (error, response, html) => {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div#main_maplayout");
+        const dashboard = $('div#main_maplayout');
         const num = parseInt(
-          dashboard.find("span.num").eq(7).text().replace(/,/g, "")
+          dashboard.find('span.num').eq(7).text().replace(/,/g, '')
         );
-        AllStatus.updateOne({ region: "세종" }, { total: num }, (err, docs) => {
+        AllStatus.updateOne({ region: '세종' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Sejong updated");
+            console.log(docs.n + ' Sejong updated');
           }
         });
       } catch (err) {
@@ -390,21 +390,21 @@ module.exports.Sejong = function updateTotal() {
 
 module.exports.Gyeonggi = function updateTotal() {
   request(
-    "https://www.gg.go.kr/bbs/boardView.do?bsIdx=464&bIdx=2296956&menuId=1535",
+    'https://www.gg.go.kr/bbs/boardView.do?bsIdx=464&bIdx=2296956&menuId=1535',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("div.gg");
-          const num = parseInt(dashboard.find("strong#c-total").text());
+          const dashboard = $('div.gg');
+          const num = parseInt(dashboard.find('strong#c-total').text());
           AllStatus.updateOne(
-            { region: "경기도" },
+            { region: '경기도' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Gyeongi updated");
+                console.log(docs.n + ' Gyeongi updated');
               }
             }
           );
@@ -418,18 +418,18 @@ module.exports.Gyeonggi = function updateTotal() {
 
 module.exports.GyeonggiCity = function updateTotal() {
   request(
-    "https://www.gg.go.kr/contents/contents.do?ciIdx=1150&menuId=2909",
+    'https://www.gg.go.kr/contents/contents.do?ciIdx=1150&menuId=2909',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const box = $("div.covid19_box");
-          data = box.find("p").each(function (i, elem) {
-            let query = $(this).attr("title");
+          const box = $('div.covid19_box');
+          data = box.find('p').each(function (i, elem) {
+            let query = $(this).attr('title');
             let num = parseInt($(this).text());
-            if (query == "광주") {
+            if (query == '광주') {
               AllStatus.updateOne(
-                { region: "경기도 광주" },
+                { region: '경기도 광주' },
                 { total: num },
                 (err, docs) => {
                   if (err) {
@@ -463,29 +463,29 @@ module.exports.GyeonggiCity = function updateTotal() {
 
 module.exports.Gangwon = function updateTotal() {
   request(
-    "http://www.provin.gangwon.kr/covid-19.html",
+    'http://www.provin.gangwon.kr/covid-19.html',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("div.condition");
+          const dashboard = $('div.condition');
           const num = parseInt(
             dashboard
-              .find("ul")
-              .find("li")
+              .find('ul')
+              .find('li')
               .eq(0)
-              .find("span")
+              .find('span')
               .text()
-              .replace("명", "")
+              .replace('명', '')
           );
           AllStatus.updateOne(
-            { region: "강원도" },
+            { region: '강원도' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Gangwon updated");
+                console.log(docs.n + ' Gangwon updated');
               }
             }
           );
@@ -500,19 +500,19 @@ module.exports.Gangwon = function updateTotal() {
 };
 
 module.exports.Chungbuk = function updateTotal() {
-  request("http://ncov.mohw.go.kr/", (error, response, html) => {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div#main_maplayout");
+        const dashboard = $('div#main_maplayout');
         const num = parseInt(
-          dashboard.find("span.num").eq(10).text().replace(/,/g, "")
+          dashboard.find('span.num').eq(10).text().replace(/,/g, '')
         );
-        AllStatus.updateOne({ region: "충북" }, { total: num }, (err, docs) => {
+        AllStatus.updateOne({ region: '충북' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Chungbuk updated");
+            console.log(docs.n + ' Chungbuk updated');
           }
         });
       } catch (err) {
@@ -526,35 +526,35 @@ module.exports.Chungbuk = function updateTotal() {
 
 module.exports.Chungnam = function updateTotal() {
   ChungnamCities = [
-    "충남",
-    "천안",
-    "공주",
-    "보령",
-    "아산",
-    "서산",
-    "논산",
-    "계룡",
-    "당진",
-    "금산",
-    "부여",
-    "서천",
-    "청양",
-    "홍성",
-    "예산",
-    "태안",
+    '충남',
+    '천안',
+    '공주',
+    '보령',
+    '아산',
+    '서산',
+    '논산',
+    '계룡',
+    '당진',
+    '금산',
+    '부여',
+    '서천',
+    '청양',
+    '홍성',
+    '예산',
+    '태안',
   ];
   request(
-    "http://www.chungnam.go.kr/coronaStatus.do?tab=1",
+    'http://www.chungnam.go.kr/coronaStatus.do?tab=1',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("table.new_tbl_board.mb20")
+          const dashboard = $('table.new_tbl_board.mb20')
             .eq(1)
-            .find("tbody")
-            .find("tr")
+            .find('tbody')
+            .find('tr')
             .eq(0);
-          data = dashboard.find("td").each(function (i, elem) {
+          data = dashboard.find('td').each(function (i, elem) {
             if (i == 0) {
               return;
             }
@@ -582,19 +582,19 @@ module.exports.Chungnam = function updateTotal() {
 };
 
 module.exports.Gyeongbuk = function updateTotal() {
-  request("http://www.gb.go.kr/Main/index.html", (error, response, html) => {
+  request('http://www.gb.go.kr/Main/index.html', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const dashboard = $("div.list1");
+        const dashboard = $('div.list1');
         const num = parseInt(
-          dashboard.find("dd.red").text().replace(/,|명/g, "")
+          dashboard.find('dd.red').text().replace(/,|명/g, '')
         );
-        AllStatus.updateOne({ region: "경북" }, { total: num }, (err, docs) => {
+        AllStatus.updateOne({ region: '경북' }, { total: num }, (err, docs) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(docs.n + " Gyeongbuk updated");
+            console.log(docs.n + ' Gyeongbuk updated');
           }
         });
       } catch (err) {
@@ -608,36 +608,36 @@ module.exports.Gyeongbuk = function updateTotal() {
 
 module.exports.GyeongbukCity = function updateTotal() {
   GyeongbukCities = {
-    pohang: "포항",
-    gyeongju: "경주",
-    gimcheon: "김천",
-    andong: "안동",
-    gumi: "구미",
-    yeongju: "영주",
-    yeongcheon: "영천",
-    sangju: "상주",
-    gbmg: "문경",
-    gyeongsan: "경산",
-    gunwi: "군위",
-    usc: "의성",
-    cheongsong: "청송",
-    yyg: "영양",
-    yd: "영덕",
-    cheongdo: "청도",
-    goryeong: "고령",
-    seongju: "성주",
-    chilgok: "칠곡",
-    yecheon: "예천",
-    bonghwa: "봉화",
-    uljin: "울진",
+    pohang: '포항',
+    gyeongju: '경주',
+    gimcheon: '김천',
+    andong: '안동',
+    gumi: '구미',
+    yeongju: '영주',
+    yeongcheon: '영천',
+    sangju: '상주',
+    gbmg: '문경',
+    gyeongsan: '경산',
+    gunwi: '군위',
+    usc: '의성',
+    cheongsong: '청송',
+    yyg: '영양',
+    yd: '영덕',
+    cheongdo: '청도',
+    goryeong: '고령',
+    seongju: '성주',
+    chilgok: '칠곡',
+    yecheon: '예천',
+    bonghwa: '봉화',
+    uljin: '울진',
   };
-  request("http://www.gb.go.kr/", (error, response, html) => {
+  request('http://gb.go.kr/corona_main.htm', (error, response, html) => {
     if (!error && response.statusCode == 200) {
       try {
         const $ = cheerio.load(html);
-        const box = $("div.corona_result");
-        data = box.find("span").each(function (i, elem) {
-          let query = GyeongbukCities[$(this).attr("class").split(" ")[1]];
+        const box = $('div.corona_result');
+        data = box.find('span').each(function (i, elem) {
+          let query = GyeongbukCities[$(this).attr('class').split(' ')[1]];
           let num = parseInt($(this).text());
           AllStatus.updateOne(
             { region: query },
@@ -660,23 +660,23 @@ module.exports.GyeongbukCity = function updateTotal() {
 
 module.exports.Gyeongnam = function updateTotal() {
   request(
-    "http://xn--19-q81ii1knc140d892b.kr/main/main.do",
+    'http://xn--19-q81ii1knc140d892b.kr/main/main.do',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const dashboard = $("div.situation1_1");
+          const dashboard = $('div.situation1_1');
           const num = parseInt(
-            dashboard.find("span.num_people.counter.all").text()
+            dashboard.find('span.num_people.counter.all').text()
           );
           AllStatus.updateOne(
-            { region: "경남" },
+            { region: '경남' },
             { total: num },
             (err, docs) => {
               if (err) {
                 console.error(err);
               } else {
-                console.log(docs.n + " Gyeongnam updated");
+                console.log(docs.n + ' Gyeongnam updated');
               }
             }
           );
@@ -692,15 +692,15 @@ module.exports.Gyeongnam = function updateTotal() {
 
 module.exports.GyeongnamCity = function updateTotal() {
   request(
-    "http://xn--19-q81ii1knc140d892b.kr/main/main.do",
+    'http://xn--19-q81ii1knc140d892b.kr/main/main.do',
     (error, response, html) => {
       if (!error && response.statusCode == 200) {
         try {
           const $ = cheerio.load(html);
-          const box = $("div.table.type1.pt10");
-          data = box.find("th").each(function (i, elem) {
+          const box = $('div.table.type1.pt10');
+          data = box.find('th').each(function (i, elem) {
             let query = $(this).text();
-            let num = parseInt(box.find("td").eq(i).text());
+            let num = parseInt(box.find('td').eq(i).text());
             AllStatus.updateOne(
               { region: query },
               { total: num },
