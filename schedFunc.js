@@ -9,66 +9,61 @@ module.exports.Total = function updateTotal() {
       try {
         let res = [];
         const $ = cheerio.load(html);
-        const table = $('div#mapAll').find('ul.cityinfo');
-        const confirm = parseInt(
-          table
-            .find('li')
-            .eq(0)
-            .find('div')
-            .eq(1)
-            .find('span', (class_ = 'num'))
-            .text()
-            .replace(',', '')
-        );
+        const table = $('div.liveNumOuter');
         const increment = parseInt(
           table
+            .find('ul.liveNum_today')
             .find('li')
-            .eq(1)
-            .find('div')
-            .eq(1)
-            .find('span', (class_ = 'sub_num.red'))
+            .eq(0)
+            .find('span.data1')
             .text()
-            .slice(2, -1)
         );
-        const monitor = parseInt(
+        const confirm = parseInt(
           table
+            .find('div.liveNum')
+            .find('ul.liveNum')
             .find('li')
-            .eq(2)
-            .find('div')
-            .eq(1)
-            .find('span', (class_ = 'num'))
-            .text()
-            .replace(',', '')
+            .eq(0)
+            .find('span.num')
+            .contents()[1]
+            .nodeValue.replace(',', '')
         );
         const cured = parseInt(
           table
+            .find('div.liveNum')
+            .find('ul.liveNum')
             .find('li')
-            .eq(3)
-            .find('div')
             .eq(1)
-            .find('span', (class_ = 'num'))
+            .find('span.num')
             .text()
             .replace(',', '')
         );
         const death = parseInt(
           table
+            .find('div.liveNum')
+            .find('ul.liveNum')
             .find('li')
-            .eq(4)
-            .find('div')
-            .eq(1)
-            .find('span', (class_ = 'num'))
+            .eq(2)
+            .find('span.num')
             .text()
             .replace(',', '')
         );
-        const formatDate = $('span.livedate')
-          .eq(1)
+        const monitor = parseInt(
+          table
+            .find('div.liveNum')
+            .find('ul.liveNum')
+            .find('li')
+            .eq(3)
+            .find('span.num')
+            .text()
+            .replace(',', '')
+        );
+        const formatDate = table
+          .find('span.livedate')
           .text()
           .split(',')[0]
           .slice(1)
           .split('.');
-        const fullDate = `질병관리본부 ${parseInt(formatDate[0])}월 ${parseInt(
-          formatDate[1]
-        )}일 ${formatDate[2].trim()}`;
         AllStatus.updateOne(
           { _id: '5e569d3c02d7831dfc09019d' },
           {
