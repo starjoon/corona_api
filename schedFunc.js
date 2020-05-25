@@ -64,6 +64,9 @@ module.exports.Total = function updateTotal() {
           .split(',')[0]
           .slice(1)
           .split('.');
+        const fullDate = `질병관리본부 ${parseInt(formatDate[0])}월 ${parseInt(
+          formatDate[1]
+        )}일 ${formatDate[2].trim()}`;
         AllStatus.updateOne(
           { _id: '5e569d3c02d7831dfc09019d' },
           {
