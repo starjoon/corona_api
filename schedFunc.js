@@ -10,13 +10,17 @@ module.exports.Total = function updateTotal() {
         let res = [];
         const $ = cheerio.load(html);
         const table = $('div.liveNumOuter');
+        const increment_full = table
+          .find('ul.liveNum')
+          .find('li')
+          .eq(0)
+          .find('span.before')
+          .text();
         const increment = parseInt(
-          table
-            .find('ul.liveNum_today')
-            .find('li')
-            .eq(0)
-            .find('span.data1')
-            .text()
+          increment_full
+            .slice(increment_full.indexOf('(') + 1, increment_full.indexOf(')'))
+            .replace('+', '')
+            .trim()
         );
         const confirm = parseInt(
           table
@@ -433,7 +437,7 @@ module.exports.GyeonggiCity = function updateTotal() {
           const box = $('div.covid19_box');
           data = box.find('p').each(function (i, elem) {
             let query = $(this).attr('title');
-            let num = parseInt($(this).text());
+            let num = parseInt($(this).contents().eq(1).text());
             if (query == '광주') {
               AllStatus.updateOne(
                 { region: '경기도 광주' },
