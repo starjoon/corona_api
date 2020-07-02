@@ -180,7 +180,14 @@ module.exports.Seoul = function updateTotal() {
         try {
           const $ = cheerio.load(html);
           const status = $('div .status');
-          const num = status.find('div .num1').find('.counter').text().trim();
+          const num = parseInt(
+            status
+              .find('div .num1')
+              .find('.counter')
+              .text()
+              .trim()
+              .replace(',', '')
+          );
           AllStatus.updateOne(
             { region: '서울' },
             { total: num },
@@ -394,7 +401,9 @@ module.exports.Gyeonggi = function updateTotal() {
         try {
           const $ = cheerio.load(html);
           const dashboard = $('div.gg');
-          const num = parseInt(dashboard.find('strong#c-total').text());
+          const num = parseInt(
+            dashboard.find('strong#c-total').text().replace(',', '')
+          );
           AllStatus.updateOne(
             { region: '경기도' },
             { total: num },
