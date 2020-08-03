@@ -22,6 +22,7 @@ cron.schedule('*/2 9,10,16,17 * * *', () => {
   lib.GyeongbukCity();
   lib.Gyeongnam();
   lib.GyeongnamCity();
+  lib.Jeju();
   // lib.Gyeongsan();
 });
 
@@ -45,5 +46,6 @@ cron.schedule('*/15 11-16 * * *', () => {
   lib.GyeongbukCity();
   lib.Gyeongnam();
   lib.GyeongnamCity();
+  lib.Jeju();
   // lib.Gyeongsan();
 });

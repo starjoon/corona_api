@@ -732,6 +732,35 @@ module.exports.GyeongnamCity = function updateTotal() {
   );
 };
 
+module.exports.Jeju = function updateTotal() {
+  request('http://ncov.mohw.go.kr/', (error, response, html) => {
+    if (!error && response.statusCode == 200) {
+      try {
+        const $ = cheerio.load(html);
+        const dashboard = $('div#main_maplayout');
+        const num = parseInt(
+          dashboard.find('span.num').eq(16).text().replace(/,/g, '')
+        );
+        AllStatus.updateOne(
+          { region: '제주도' },
+          { total: num },
+          (err, docs) => {
+            if (err) {
+              console.error(err);
+            } else {
+              console.log(docs.n + ' Jeju updated');
+            }
+          }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      console.error(error);
+    }
+  });
+};
+
 // module.exports.Gyeongsan = function updateTotal() {
 //   request(
 //     'http://gbgs.go.kr/programs/corona/corona.do',
