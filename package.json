@@ -1,24 +1,24 @@
 {
-    "name": "bixby-corona",
-    "version": "1.0.0",
-    "description": "M.E.R.N stack for custom nCoV-KR API",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js",
-        "dev": "nodemon index.js"
-    },
-    "author": "Joon Choi",
-    "license": "MIT",
-    "dependencies": {
-        "async": "^3.2.0",
-        "axios": "^0.19.2",
-        "cheerio": "^1.0.0-rc.3",
-        "express": "^4.17.1",
-        "mongoose": "^5.8.11",
-        "node-cron": "^2.0.3",
-        "request": "^2.88.2"
-    },
-    "devDependencies": {
-        "nodemon": "^2.0.2"
-    }
+  "name": "bixby-corona",
+  "version": "1.0.0",
+  "description": "M.E.R.N stack for custom nCoV-KR API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Joon Choi",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.0",
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.11",
+    "node-cron": "^2.0.3",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
