@@ -1,8 +1,8 @@
-var cron = require('node-cron');
-var lib = require('./schedFunc.js');
+var cron = require("node-cron");
+var lib = require("./schedFunc.js");
 
-cron.schedule('*/2 9,10,16,17 * * *', () => {
-  console.log('Cron Running!');
+cron.schedule("*/2 9,10,16,17 * * *", () => {
+  console.log("Cron Running!");
   lib.Total();
   lib.Countries();
   lib.Seoul();
@@ -26,8 +26,8 @@ cron.schedule('*/2 9,10,16,17 * * *', () => {
   // lib.Gyeongsan();
 });
 
-cron.schedule('*/15 11-16 * * *', () => {
-  console.log('Cron Running!');
+cron.schedule("*/15 11-16 * * *", () => {
+  console.log("Cron Running!");
   lib.Total();
   lib.Seoul();
   lib.Busan();
