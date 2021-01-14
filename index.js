@@ -3,7 +3,6 @@ const app = express();
 const mongoose = require("mongoose");
 const config = require("./config");
 const cron = require("./cron");
-const local = require("./archive/localConfig");
 
 //Initial Page
 app.get("/", (req, res) => {
@@ -32,7 +31,7 @@ db.once("open", () => {
 });
 
 app.listen(config.PORT, () => {
-  mongoose.connect(config.MONGODB_URI || local.MONGODB_URI, {
+  mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
