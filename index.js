@@ -2,12 +2,13 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const config = require("./config");
-var cron = require("./cron");
+const cron = require("./cron");
+const local = require("./archive/localConfig");
 
 //Initial Page
 app.get("/", (req, res) => {
   res.send(
-    "Welcome to nCoV-KR API made by Joon Choi. Please visit /patients, /allstatus, /track for more info"
+    "Welcome to nCoV-KR API made by Joon Choi. Please visit /patients, /status, /track for more info"
   );
 });
 
@@ -20,6 +21,7 @@ app.use(
 );
 app.use("/patients", require("./routes/patients.js"));
 app.use("/allStatus", require("./routes/allStatus.js"));
+app.use("/status", require("./routes/status.js"));
 app.use("/track", require("./routes/track.js"));
 
 //Initialize Mongoose and connect
@@ -30,7 +32,7 @@ db.once("open", () => {
 });
 
 app.listen(config.PORT, () => {
-  mongoose.connect(config.MONGODB_URI, {
+  mongoose.connect(config.MONGODB_URI || local.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
